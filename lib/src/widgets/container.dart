@@ -27,6 +27,7 @@ import 'package:flutter/scheduler.dart';
 
 import '../theme.dart';
 import '../easy_loading.dart';
+import 'indicator.dart';
 
 class EasyLoadingContainer extends StatefulWidget {
   final Widget? indicator;
@@ -164,6 +165,7 @@ class EasyLoadingContainerState extends State<EasyLoadingContainer>
           builder: (BuildContext context, Widget? child) {
             return EasyLoadingTheme.loadingAnimation.buildWidget(
               _Indicator(
+                canClose: widget.indicator is LoadingIndicator,
                 status: _status,
                 indicator: widget.indicator,
               ),
@@ -180,47 +182,73 @@ class EasyLoadingContainerState extends State<EasyLoadingContainer>
 class _Indicator extends StatelessWidget {
   final Widget? indicator;
   final String? status;
+  final bool? canClose;
 
   const _Indicator({
     required this.indicator,
     required this.status,
+    required this.canClose,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(50.0),
-      decoration: BoxDecoration(
-        color: EasyLoadingTheme.backgroundColor,
-        borderRadius: BorderRadius.circular(
-          EasyLoadingTheme.radius,
+    return Stack(
+      children: [
+        Container(
+          margin: const EdgeInsets.all(50.0),
+          decoration: BoxDecoration(
+            color: EasyLoadingTheme.backgroundColor,
+            borderRadius: BorderRadius.circular(
+              EasyLoadingTheme.radius,
+            ),
+          ),
+          padding: EasyLoadingTheme.contentPadding,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              if (indicator != null)
+                Container(
+                  margin: status?.isNotEmpty == true
+                      ? EasyLoadingTheme.textPadding
+                      : EdgeInsets.zero,
+                  child: indicator,
+                ),
+              if (status != null)
+                Text(
+                  status!,
+                  style: EasyLoadingTheme.textStyle ??
+                      TextStyle(
+                        color: EasyLoadingTheme.textColor,
+                        fontSize: EasyLoadingTheme.fontSize,
+                      ),
+                  textAlign: EasyLoadingTheme.textAlign,
+                ),
+            ],
+          ),
         ),
-      ),
-      padding: EasyLoadingTheme.contentPadding,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          if (indicator != null)
-            Container(
-              margin: status?.isNotEmpty == true
-                  ? EasyLoadingTheme.textPadding
-                  : EdgeInsets.zero,
-              child: indicator,
-            ),
-          if (status != null)
-            Text(
-              status!,
-              style: EasyLoadingTheme.textStyle ??
-                  TextStyle(
-                    color: EasyLoadingTheme.textColor,
-                    fontSize: EasyLoadingTheme.fontSize,
+        canClose == true
+            ? Positioned(
+                child: GestureDetector(
+                  onTap: () => EasyLoading.dismiss(),
+                  child: Container(
+                    child: Icon(
+                      Icons.clear,
+                      size: 18,
+                      color: Colors.white60,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white24,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
                   ),
-              textAlign: EasyLoadingTheme.textAlign,
-            ),
-        ],
-      ),
+                ),
+                top: 53,
+                right: 53,
+              )
+            : SizedBox(),
+      ],
     );
   }
 }

@@ -195,7 +195,9 @@ class EasyLoading {
   Timer? _timer;
 
   Widget? get w => _w;
+
   GlobalKey<EasyLoadingContainerState>? get key => _key;
+
   GlobalKey<EasyLoadingProgressState>? get progressKey => _progressKey;
 
   final List<EasyLoadingStatusCallback> _statusCallbacks =
@@ -227,6 +229,7 @@ class EasyLoading {
   }
 
   static EasyLoading get instance => _instance;
+
   static bool get isShow => _instance.w != null;
 
   /// init EasyLoading

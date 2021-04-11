@@ -26,6 +26,7 @@ import '../easy_loading.dart';
 import './overlay_entry.dart';
 
 class FlutterEasyLoading extends StatefulWidget {
+  //整个应用视图widget
   final Widget? child;
 
   const FlutterEasyLoading({
